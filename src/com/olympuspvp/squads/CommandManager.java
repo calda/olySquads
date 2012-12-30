@@ -17,7 +17,38 @@ public class CommandManager{
 	}
 	
 	protected void squadCommand(CommandSender s, String[] args){
-		
+		if(!(s instanceof Player)) return;
+		Player p = (Player) s;
+		if(args.length == 0) sendHelp(p);
+		else if(args[0].equalsIgnoreCase("create")) createSquadCommand(p, args);
+		else if(args[0].equalsIgnoreCase("delete")) deleteSquadCommand(p);
+		else if(args[0].equalsIgnoreCase("leave")) leaveSquadCommand(p);
+		else if(args[0].equalsIgnoreCase("invite")) invitePlayerCommand(p, args);
+		else if(args[0].equalsIgnoreCase("accept")) acceptInviteCommand(p);
+		else if(args[0].equalsIgnoreCase("sethome")) setHomeCommand(p);
+		else if(args[0].equalsIgnoreCase("setrally")) setRallyCommand(p);
+		else if(args[0].equalsIgnoreCase("rally")) rallyCommand(p);
+		else if(args[0].equalsIgnoreCase("home")) homeCommand(p);
+		else if(args[0].equalsIgnoreCase("playerinfo")) playerInfoCommand(p, args);
+		else if(args[0].equalsIgnoreCase("squadInfo")) squadInfoCommand(p, args);
+		else if(args[0].equalsIgnoreCase("list")) listCommand(p);
+		else if(args[0].equalsIgnoreCase("say") || args[0].equalsIgnoreCase("s")) squadcastCommand(p, args);
+		else if(args[0].equalsIgnoreCase("help")) sendHelp(p);
+		else sendHelp(p);
+	}
+	
+	public void sendHelp(Player p){
+		p.sendMessage(squads + "Usage for olySquad's /squad command:");
+		p.sendMessage(ChatColor.GRAY + "/s create [name]" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Creates a new Squad");
+		p.sendMessage(ChatColor.GRAY + "/s delete" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Deletes your squad");
+		p.sendMessage(ChatColor.GRAY + "/s invite [player]" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Invites a player to your squad");
+		p.sendMessage(ChatColor.GRAY + "/s accept" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Accepts your active invite");
+		p.sendMessage(ChatColor.GRAY + "/s sethome" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Sets the squad home to your location");
+		p.sendMessage(ChatColor.GRAY + "/s home" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Teleports you to your squad's home");
+		p.sendMessage(ChatColor.GRAY + "/s setrally" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Sets the squad rally to your location");
+		p.sendMessage(ChatColor.GRAY + "/s rally" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Teleports you to your squad's rally");
+		p.sendMessage(ChatColor.GRAY + "/s playerinfo [name,exact]" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Gives a player's squad");
+		p.sendMessage(ChatColor.GRAY + "/s [say/s] [message]" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Sends a message to all members");
 	}
 	
 	public boolean playerIsInSquad(Player p, boolean message){
@@ -43,6 +74,10 @@ public class CommandManager{
 		}
 		if(args.length == 2){
 			String name = args[1];
+			if(squad.getConfig().getConfigurationSection("Squads").contains(name)){
+				p.sendMessage(squads + "That squad already exists.");
+				return;
+			}
 			Squad s = new Squad(name, p.getName(), new ArrayList<String>(), null, null, squad);
 			s.save();
 			squad.loadSquad(name, s);
@@ -68,6 +103,19 @@ public class CommandManager{
 			s.delete();
 			deleteRequests.remove(p.getName());
 		}
+	}
+	
+	private void leaveSquadCommand(Player p){
+		if(!playerIsInSquad(p, true)) return;
+		if(playerIsSquadOwner(p, false)){
+			p.sendMessage(squads + "You cannot leave the squad is you are its owner.");
+			p.sendMessage(squads + "You can delete it with " + ChatColor.DARK_GRAY + "/s delete");
+			return;
+		}Squad s = squad.getPlayerSquad(p.getName());
+		s.squadcast("olySquad", ChatColor.DARK_GRAY + p.getName() + ChatColor.GRAY + " has left the squad.", false);
+		s.removeMember(p.getName());
+		s.save();
+		squad.setPlayerSquad(p.getName(), null, true);
 	}
 	
 	/*  /s invite [name]   */
@@ -135,8 +183,74 @@ public class CommandManager{
 		if(!playerIsInSquad(p, true)) return;
 		Squad s = squad.getPlayerSquad(p.getName());
 		Location home = s.getHome();
+		p.teleport(home);
+		p.sendMessage(squads + "You have been teleported to your squads's home");
 	}
 	
+	/*   /s home   */
+	protected void rallyCommand(Player p){
+		if(!playerIsInSquad(p, true)) return;
+		Squad s = squad.getPlayerSquad(p.getName());
+		Location rally = s.getRally();
+		p.teleport(rally);
+		p.sendMessage(squads + "You have been teleported to your squad's rally point");
+	}
 	
+	protected void playerInfoCommand(Player p, String[] args){
+		if(args.length != 2){
+			p.sendMessage(squads + "Incorrect usage. /s player [name,exact]");
+		}Squad s = squad.getPlayerSquad(args[2]);
+		if(s == null) p.sendMessage(squads + ChatColor.GRAY + args[2] + ChatColor.GRAY + "is not currently in a squad.");
+		else p.sendMessage(squads + ChatColor.GRAY + args[2] + ChatColor.GRAY + "is in the squad " + ChatColor.DARK_GRAY + s.getName());
+	}
+	
+	protected void listCommand(Player p){
+		String[] squadsCreated = (String[])squad.getConfig().getConfigurationSection("Squads").getKeys(false).toArray();
+		StringBuilder sb = new StringBuilder();
+		for(String s : squadsCreated){
+			sb.append(ChatColor.GRAY + s);
+			if(!s.equals(squadsCreated[squadsCreated.length - 1])) sb.append(ChatColor.DARK_GRAY + ", ");
+		}p.sendMessage(squads + "Squads created on " + ChatColor.GOLD + "OlympusPVP" + ChatColor.GRAY + ":");
+		p.sendMessage(sb.toString());
+	}
+	
+	protected void squadInfoCommand(Player p, String[] args){
+		if(args.length != 2){
+			p.sendMessage(squads + "Incorrect usage. /s squad [name,exact]");
+			return;
+		}
+		Set<String> squadsCreated = squad.getConfig().getConfigurationSection("Squads").getKeys(false);
+		if(!squadsCreated.contains(args[1])){
+			p.sendMessage(squads + "That squad does not exist.");
+			return;
+		}Squad s = squad.getSquad(args[1]);
+		p.sendMessage(squads + "Information for " + ChatColor.DARK_GRAY + s.getName() + ChatColor.GRAY + ":");
+		p.sendMessage(squads + "Created by " + ChatColor.DARK_GRAY + s.getOwner());
+		String[] members = (String[])s.getMembers().toArray();
+		StringBuilder sb = new StringBuilder();
+		for(String str : members){
+			sb.append(ChatColor.GRAY + str);
+			if(!s.equals(members[members.length - 1])) sb.append(ChatColor.DARK_GRAY + ", ");
+		}
+		p.sendMessage(squads + "Members: " + sb.toString());
+		if(s.contains(p.getName())){
+			Location home = s.getHome();
+			Location rally = s.getRally();
+			p.sendMessage(squads + ChatColor.DARK_GRAY + "Home: " + ChatColor.GRAY + home.getBlockX() + ", " + home.getBlockY() + ", " + home.getBlockZ() + " in " + home.getWorld().getName());
+			p.sendMessage(squads + ChatColor.DARK_GRAY + "Rally: " + ChatColor.GRAY + rally.getBlockX() + ", " + rally.getBlockY() + ", " + rally.getBlockZ() + " in " + rally.getWorld().getName());
+		}
+	}
+	
+	protected void squadcastCommand(Player p, String[] args){
+		if(!playerIsInSquad(p, true)) return;
+		if(args.length <= 1){
+			p.sendMessage(squads + "You must type a message.");
+			return;
+		}StringBuilder sb = new StringBuilder();
+		for(int i = 1; i < args.length; i++){
+			sb.append(" ");
+		}Squad s = squad.getPlayerSquad(p.getName());
+		s.squadcast(p.getName(), sb.toString(), true);
+	}
 	
 }

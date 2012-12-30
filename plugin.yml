@@ -1,0 +1,11 @@
+name: olySquads
+main: com.olympuspvp.squads.olySquads
+version: 2.0.1b
+author: CalDaBeast
+description: Lightweight teaming plugin
+
+commands:
+    s:
+        description: Manages olySquads
+    squad:
+        description: Manages olySquads

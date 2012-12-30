@@ -82,7 +82,7 @@ public class Squad{
 		config.set("Squads." + name + ".Home", null);
 		config.set("Squads." + name + ".Rally", null);
 		for(String s : members){
-			oly.setPlayerSquad(s, name, false);
+			oly.setPlayerSquad(s, null, false);
 		}oly.saveConfig();
 	}
 
