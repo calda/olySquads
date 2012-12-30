@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class CommandManager{
 
@@ -164,7 +165,7 @@ public class CommandManager{
 		s.save();
 		squad.loadSquad(s.getName(), s);
 		squad.setPlayerSquad(p.getName(), squadName, true);
-		s.squadcast("olyChat", ChatColor.DARK_GRAY + p.getName() + ChatColor.GRAY + " has been joined the squad.", false);
+		s.squadcast("!", ChatColor.DARK_GRAY + p.getName() + ChatColor.GRAY + " has joined the squad.", false);
 	}
 
 	/*   /s sethome   */
@@ -197,7 +198,7 @@ public class CommandManager{
 			p.sendMessage(squads + "There is no home set.");
 			return;
 		}
-		p.teleport(home);
+		p.teleport(home, TeleportCause.COMMAND);
 		p.sendMessage(squads + "You have been teleported to your squads's home");
 	}
 
@@ -210,7 +211,7 @@ public class CommandManager{
 			p.sendMessage(squads + "There is no rally point set.");
 			return;
 		}
-		p.teleport(rally);
+		p.teleport(rally, TeleportCause.COMMAND);
 		p.sendMessage(squads + "You have been teleported to your squad's rally point");
 	}
 

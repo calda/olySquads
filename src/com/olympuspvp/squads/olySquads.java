@@ -116,7 +116,7 @@ public class olySquads extends JavaPlugin{
 			if(world == null) return null;
 		}catch(Exception e){
 			return null;
-		}return new Location(world, x, y, z, pitch, yaw);
+		}return new Location(world, x, y, z, yaw, pitch);
 	}
 	
 	/**
