@@ -46,7 +46,14 @@ public class olySquads extends JavaPlugin{
 		reloadData();
 	}
 	
+	public void reloadData(){
+		for(Player p : Bukkit.getOnlinePlayers()){
+			loadData(p.getName());
+		}
+	}
+	
 	public void loadData(String name){
+		System.out.println("Loading data for " + name);
 		if(playerData.containsKey(name)) return;
 		String squad = config.getString("Players." + name);
 		playerData.put(name, squad);
@@ -59,13 +66,12 @@ public class olySquads extends JavaPlugin{
 		}
 	}
 	
-	public void reloadData(){
-		for(Player p : Bukkit.getOnlinePlayers()){
-			loadData(p.getName());
-		}
+	public void loadData(String name, String squad){
+		playerData.put(name, squad);
 	}
-	
+
 	public boolean loadSquad(String name){
+		System.out.println("Loading squad " + name);
 		String owner = config.getString("Squads." + name + ".Owner");
 		if(owner == null) return false;
 		List<String> members = config.getStringList("Squads." + name + ".Members");
@@ -76,15 +82,14 @@ public class olySquads extends JavaPlugin{
 		Location rally = stringToLoc(rallyString);
 		Squad s = new Squad(name, owner, members, home, rally, this);
 		squads.put(name, s);
+		System.out.println("Squad loaded");
 		return true;
 	}
 	
-	public void loadData(String name, String squad){
-		playerData.put(name, squad);
-	}
-	
 	public void loadSquad(String name, Squad s){
+		System.out.println("Loading squad " + name);
 		squads.put(name, s);
+		System.out.println("Squad loaded: " + squads.toString());
 	}
 	
 	/**
@@ -94,6 +99,7 @@ public class olySquads extends JavaPlugin{
 	 * @return A location based on s
 	 */
 	public Location stringToLoc(String s){
+		if(s == null) return null;
 		String[] parse = s.split(";");
 		if(parse.length != 6) return null;
 		String worldName = parse[0];
@@ -120,6 +126,7 @@ public class olySquads extends JavaPlugin{
 	 * @return A string with the essential information of loc
 	 */
 	public String locToString(Location loc){
+		if(loc == null) return null;
 		int x = loc.getBlockX();
 		int y = loc.getBlockY();
 		int z = loc.getBlockZ();
@@ -135,9 +142,11 @@ public class olySquads extends JavaPlugin{
 
 	public Squad getPlayerSquad(String name){
 		if(!playerData.containsKey(name)) loadData(name);
-		String squad = playerData.get(name);
-		if(squad == null) return null;
-		return getSquad(name);
+		String sName = playerData.get(name);
+		if(sName == null) return null;
+		Squad squad = squads.get(playerData.get(name)); //YOU, LINE, ARE A BASTARD
+		System.out.println(name + " returns " + squad.getName());
+		return squad; //YOU TOO
 	}
 	
 	public Squad getSquad(String name){
@@ -146,9 +155,11 @@ public class olySquads extends JavaPlugin{
 	}
 	
 	public void setPlayerSquad(String name, String squad, boolean save){
+		System.out.println("Loading playerdata for " + name + " in " + squad + ". WillSave = " + save);
 		config.set("Players." + name, squad);
 		if(save) saveConfig();
 		playerData.put(name, squad);
+		System.out.println(playerData.toString());
 	}
 	
 	public void setPlayerSquad(String name, String squad){

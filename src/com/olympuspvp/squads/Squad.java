@@ -21,6 +21,7 @@ public class Squad{
 		this.owner = owner;
 		this.members = members;
 		this.home = home;
+		this.rally = rally;
 		this.oly = oly;
 	}
 
@@ -53,7 +54,7 @@ public class Squad{
 	}
 
 	public List<String> addMember(String member){
-		members.add("member");
+		members.add(member);
 		return members;
 	}
 
@@ -83,7 +84,8 @@ public class Squad{
 		config.set("Squads." + name + ".Rally", null);
 		for(String s : members){
 			oly.setPlayerSquad(s, null, false);
-		}oly.saveConfig();
+		}config.set("Squads." + name, null);
+		oly.saveConfig();
 	}
 
 	public void squadcast(String player, String message, boolean getColors){
@@ -93,12 +95,13 @@ public class Squad{
 		if(getColors){
 			player = oly.getChat().getName(name);
 			sepColor = oly.getChat().getSeparatorColor(name);
+			player = player.replaceAll("%name", name);
 			player = ChatColor.translateAlternateColorCodes('&', player);
 			sepColor = ChatColor.translateAlternateColorCodes('&', sepColor);
 		}if(name.equals(owner)) player = "*" + player;
 		for(String s : members){
 			Player p = Bukkit.getPlayerExact(s);
-			if(p != null) p.sendMessage(ChatColor.GOLD + "[" + ChatColor.YELLOW + name + ChatColor.GOLD + "] " + ChatColor.DARK_GRAY + player + sepColor + ": " + ChatColor.GRAY + message);
+			if(p != null) p.sendMessage(ChatColor.GOLD + "[" + ChatColor.YELLOW + this.name + ChatColor.GOLD + "] " + ChatColor.DARK_GRAY + player + sepColor + ": " + ChatColor.GRAY + message);
 		}
 	}
 
