@@ -34,21 +34,26 @@ public class TeleportManager implements Listener{
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerTeleport(final PlayerTeleportEvent e){
 		final Player p = e.getPlayer();
+		if(e.getCause() != TeleportCause.COMMAND) return;
 		if(waiting.containsKey(p.getName())){
 			p.sendMessage(tag + "You already have a teleport in progress.");
 			return;
 		}
-		if(e.getCause() != TeleportCause.PLUGIN) return;
 		final List<String> playersNearby = new ArrayList<String>();
 		for(final Entity ent : p.getNearbyEntities(20, 20, 20)){
 			if(ent instanceof Player) playersNearby.add(((Player)ent).getName());
-		}if(playersNearby.size() == 0) return;
-		final Squad s = squad.getPlayerSquad(p.getName());
+		}if(playersNearby.size() == 0){ 
+			p.sendMessage(tag + "You have been teleported.");
+			return;
+		}final Squad s = squad.getPlayerSquad(p.getName());
 		if(s != null){
 			for(final String name : s.getMembers()){
 				if(playersNearby.contains(name)) playersNearby.remove(name);
 			}
-		}if(playersNearby.size() == 0) return;
+		}if(playersNearby.size() == 0){
+			p.sendMessage(tag + "You have been teleported.");
+			return;
+		}
 
 		final Location tpto = e.getTo();
 		final Random r = new Random();
@@ -64,7 +69,7 @@ public class TeleportManager implements Listener{
 				if(waiting.containsKey(p.getName())){
 					final double key = waiting.get(p.getName());
 					if(key != serializedTeleportCode) return;
-					p.sendMessage(tag + "Your teleport will now commence.");
+					p.sendMessage(tag + "You have been teleported.");
 					p.teleport(tpto, TeleportCause.PLUGIN);
 					waiting.remove(p.getName());
 				}
@@ -77,8 +82,12 @@ public class TeleportManager implements Listener{
 	public void onPlayerMove(final PlayerMoveEvent e){
 		final Player p = e.getPlayer();
 		if(waiting.containsKey(p.getName())){
-			waiting.remove(p.getName());
-			p.sendMessage(tag + "Your in-progress teleport has been cancelled.");
+			Location from = e.getFrom();
+			Location to = e.getTo();
+			if(from.getX() != to.getX() || from.getY() != to.getY() || from.getY() != to.getY()){
+				waiting.remove(p.getName());
+				p.sendMessage(tag + "Your in-progress teleport has been cancelled.");
+			}
 		}
 	}
 	

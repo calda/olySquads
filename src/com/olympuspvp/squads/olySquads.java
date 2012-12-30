@@ -24,6 +24,7 @@ public class olySquads extends JavaPlugin{
 	//config.getConfigurationSection("Squads").getKeys(false).toArray();
 	LoginListener login = new LoginListener(this);
 	CommandManager command = new CommandManager(this);
+	TeleportManager teleport;
 	
 	@Override
 	public void onEnable(){
@@ -44,6 +45,7 @@ public class olySquads extends JavaPlugin{
 			System.out.println("[olySquads] Default Configuration set at location " + configFile.getPath());
 		}Bukkit.getPluginManager().registerEvents(login, this);
 		reloadData();
+		teleport = new TeleportManager(this);
 	}
 	
 	public void reloadData(){

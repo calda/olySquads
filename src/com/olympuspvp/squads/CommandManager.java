@@ -199,7 +199,7 @@ public class CommandManager{
 			return;
 		}
 		p.teleport(home, TeleportCause.COMMAND);
-		p.sendMessage(squads + "You have been teleported to your squads's home");
+		//p.sendMessage(squads + "You have been teleported to your squads's home");
 	}
 
 	/*   /s home   */
@@ -212,7 +212,7 @@ public class CommandManager{
 			return;
 		}
 		p.teleport(rally, TeleportCause.COMMAND);
-		p.sendMessage(squads + "You have been teleported to your squad's rally point");
+		//p.sendMessage(squads + "You have been teleported to your squad's rally point");
 	}
 
 	protected void playerInfoCommand(Player p, String[] args){
