@@ -1,8 +1,6 @@
 package com.olympuspvp.squads;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -10,8 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.olympuspvp.chat.olyChat;
@@ -19,8 +17,8 @@ import com.olympuspvp.chat.olyChat;
 
 public class olySquads extends JavaPlugin{
 
-	FileConfiguration config;
-	private final File configFile = new File("plugins" + File.separator + "olySquads" + File.separator + "config.yml");
+	FileConfiguration config = getConfig();
+	final File configFile = new File("plugins" + File.separator + "olySquads" + File.separator + "config.yml");
 	private HashMap<String, String> playerData = new HashMap<String, String>(); //Player Name, Squad Name
 	private HashMap<String, Squad> squads = new HashMap<String, Squad>();//Squad Name, Squad (Data)
 	//config.getConfigurationSection("Squads").getKeys(false).toArray();
@@ -29,10 +27,10 @@ public class olySquads extends JavaPlugin{
 	
 	@Override
 	public void onEnable(){
-		config = getConfig();
+		config = this.getConfig();
 		try{
-			config.load(configFile);
-		}catch(FileNotFoundException exe){
+			config = YamlConfiguration.loadConfiguration(configFile);
+		}catch(Exception  exe){
 			System.out.println("[olySquads] The config file could not be found. Creating one.");
 			config.set("Squads.Default.Owner", "CalDeFault");
 			List<String> members = new ArrayList<String>();
@@ -44,12 +42,6 @@ public class olySquads extends JavaPlugin{
 			config.set("Players.CalDeFault", "Default");
 			saveConfig();
 			System.out.println("[olySquads] Default Configuration set at location " + configFile.getPath());
-		}catch(IOException exe){
-			System.out.println("[olySquads] An unknown I/O error occured. Is the config file set to be unable to be read...? Stack Trace follows:");
-			exe.printStackTrace();
-		}catch(InvalidConfigurationException exe){
-			System.out.println("[olySquads] The config file was formatted incorrectly. Stack Trace follows:");
-			exe.printStackTrace();
 		}Bukkit.getPluginManager().registerEvents(login, this);
 		reloadData();
 	}

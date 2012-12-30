@@ -52,7 +52,7 @@ public class CommandManager{
 	}
 	
 	public boolean playerIsInSquad(Player p, boolean message){
-		boolean test = squad.getPlayerSquad(p.getName()) == null;
+		boolean test = squad.getPlayerSquad(p.getName()) != null;
 		if(!test && message) p.sendMessage(squad + "You have to be in a squad to do that.");
 		return test;
 	}
@@ -69,7 +69,7 @@ public class CommandManager{
 	/*  /s create [name]   */
 	protected void createSquadCommand(Player p, String[] args){
 		if(playerIsInSquad(p, false)){
-			p.sendMessage(squad + "You have to leave your current squad to do that.");
+			p.sendMessage(squads + "You have to leave your current squad to do that.");
 			return;
 		}
 		if(args.length == 2){
