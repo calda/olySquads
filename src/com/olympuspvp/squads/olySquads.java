@@ -46,6 +46,7 @@ public class olySquads extends JavaPlugin{
 		}Bukkit.getPluginManager().registerEvents(login, this);
 		reloadData();
 		teleport = new TeleportManager(this);
+		new PVPListener(this);
 	}
 	
 	public void reloadData(){
