@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="/Users/cal/Desktop/eclipse/craftbukkit.jar"/>
-	<classpathentry kind="lib" path="/olyChat/src/com/olympuspvp/chat"/>
-	<classpathentry kind="lib" path="/Users/cal/Desktop/BukkitServer/Bukkit Plugins/olyChat.jar"/>
+	<classpathentry kind="lib" path="/Users/dfaeditbay5/Documents/Student Storage Edit 5/Cal Stephens/workspace/olyFiles/craftbukkit-1.4.6-R0.1.jar"/>
+	<classpathentry kind="lib" path="/Users/dfaeditbay5/Documents/Student Storage Edit 5/Cal Stephens/workspace/olyFiles/olyChat.jar"/>
+	<classpathentry kind="lib" path="/Users/dfaeditbay5/Documents/Student Storage Edit 5/Cal Stephens/workspace/olyFiles/olySpawn.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -19,15 +19,19 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import com.olympuspvp.spawn.olySpawn;
+
 
 public class TeleportManager implements Listener{
 
 	HashMap<String, Double> waiting = new HashMap<String, Double>();
 	olySquads squad;
+	olySpawn spawn;
 	String tag = ChatColor.GOLD + "[" + ChatColor.YELLOW + "olySquads" + ChatColor.GOLD + "] " + ChatColor.GRAY;
 
 	protected TeleportManager(final olySquads squad){
 		this.squad = squad;
+		spawn = (olySpawn) Bukkit.getPluginManager().getPlugin("olySpawn");
 		Bukkit.getPluginManager().registerEvents(this, squad);
 	}
 
@@ -35,6 +39,7 @@ public class TeleportManager implements Listener{
 	public void onPlayerTeleport(final PlayerTeleportEvent e){
 		final Player p = e.getPlayer();
 		if(e.getCause() != TeleportCause.COMMAND) return;
+		if(spawn.isProtected(p)) return;
 		if(waiting.containsKey(p.getName())){
 			p.sendMessage(tag + "You already have a teleport in progress.");
 			return;
