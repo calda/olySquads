@@ -36,6 +36,7 @@ public class PVPListener implements Listener{
 			LivingEntity shooter = ((Projectile)entDamager).getShooter();
 			if(shooter instanceof Player) pDamager = (Player) shooter;
 		}if(pDamager == null) return;
+		if(damagedSquad == null) return;
 		if(damagedSquad.contains(pDamager.getName())){
 			e.setCancelled(true);
 		}

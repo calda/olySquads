@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -47,7 +48,7 @@ public class TeleportManager implements Listener{
 		final List<String> playersNearby = new ArrayList<String>();
 		for(final Entity ent : p.getNearbyEntities(20, 20, 20)){
 			if(ent instanceof Player) playersNearby.add(((Player)ent).getName());
-		}if(playersNearby.size() == 0){ 
+		}if(playersNearby.size() == 0 || p.getGameMode() == GameMode.CREATIVE){ 
 			p.sendMessage(tag + "You have been teleported.");
 			return;
 		}final Squad s = squad.getPlayerSquad(p.getName());

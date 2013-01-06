@@ -1,6 +1,10 @@
 name: olySquads
 main: com.olympuspvp.squads.olySquads
+<<<<<<< HEAD
 version: 2.1.4
+=======
+version: 2.2.1
+>>>>>>> v2.2.1 - Fixed bug in TeleportListener and allowed people in creative mode to bypass it
 author: CalDaBeast
 description: Lightweight teaming plugin
 
